@@ -1,29 +1,34 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { useFonts } from 'expo-font'
+import 'react-native-reanimated'
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+import BPM from '@/screens/BPM'
+import MainMenu from '@/screens/MainMenu'
+
+import { useColorScheme } from '../hooks/useColorScheme'
+
+export type RootStackParamList = {
+  MainMenu: undefined
+  BPM: { itemId: number, title: string }
+}
+
+const Stack = createNativeStackNavigator<RootStackParamList>()
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme()
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+  })
 
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
-  }
+  if (!loaded) return null
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
+      <Stack.Navigator initialRouteName="MainMenu" >
+        <Stack.Screen name="MainMenu" component={MainMenu} options={{ headerShown: false }} />
+        <Stack.Screen name="BPM" component={BPM} options={{ headerShown: false }} />
+      </Stack.Navigator>
     </ThemeProvider>
-  );
+  )
 }
